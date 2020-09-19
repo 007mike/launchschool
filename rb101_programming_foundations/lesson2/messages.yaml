@@ -1,0 +1,22 @@
+en:  
+  welcome: "Welcome to the CALCULATOR. Enter your name:"
+  name_valid: "Make sure to enter your name."
+  first_number: "Please enter the 1st number:"
+  number_not_valid: "That doesn't look like a valid number."
+  second_number: "Please enter the 2nd number:"
+  operator_choice: "What operation would you like to perform? 1) Add 2) Substract 3) Multiply 4) Divide"
+  operator_valid: "Must choose 1, 2, 3, 4"
+  try_again: "Do you want to perform and another calculation? (Y) to try again."
+  thank_you: "Thanks for using CALCULATOR"
+
+es:
+  welcome: "Bienvenidos a la CALCULADORA. Introduzca su nombre:"
+  name_valid: "Asegúrate de ingresar tu nombre."
+  first_number: "Introduzca el primer número:"
+  number_not_valid: "Eso no parece un número válido."
+  second_number: "Introduzca el segundo número:"
+  operator_choice: "¿Qué operación le gustaría realizar? 1) Sumar 2) Restar 3) Multiplicar 4) Dividir"
+  operator_valid: "Debe elegir 1, 2, 3, 4"
+  try_again: "¿Quieres realizar y otro cálculo? (Y) para volver a intentarlo."
+  thank_you: "Gracias por usar CALCULATOR"
+
