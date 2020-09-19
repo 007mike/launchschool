@@ -18,10 +18,11 @@ def valid_number?(input)
   valid_integer?(input) || valid_float?(input)
 end
 
-def spinner(numtimes)
-  waitrotate = %w(| / -)
+def calculating(numtimes)
+  print 'Calculating '
+  waitcursor = "."
   numtimes.times do
-    print "\b" + waitrotate.rotate!.first
+    print waitcursor
     sleep(0.1)
   end
 end
@@ -72,8 +73,7 @@ loop do
                     (1 - (1 + monthly_interest_rate)**(-loan_duration_months)))
 
   puts "\n"
-  prompt('Calculating ...')
-  spinner(10)
+  calculating(10)
   puts "\n"
   prompt("Monthly Payment:\t $#{monthly_payment.round(2)}")
   prompt("No. of Payments:\t #{loan_duration_months.to_i}")
