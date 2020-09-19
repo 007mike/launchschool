@@ -27,7 +27,7 @@ def calculating(numtimes)
   end
 end
 
-puts "\n**** MORTGAGE CALCULATOR v1.0 ****\n"
+puts "\n**** MORTGAGE CALCULATOR v1.0 ****\n\n"
 
 loop do
   total_loan_amount = ''
@@ -77,7 +77,7 @@ loop do
   puts "\n"
   prompt("Monthly Payment:\t $#{monthly_payment.round(2)}")
   prompt("No. of Payments:\t #{loan_duration_months.to_i}")
-  prompt("Loan Amount:\t $#{format('%.02f', total_loan_amount.to_f)}")
+  prompt("Loan Amount:\t $#{total_loan_amount.to_f.round(2)}")
   prompt("Annual APR:\t\t #{annual_interest_rate.to_f.round(2)}%")
 
   puts "\n"
