@@ -21,7 +21,9 @@ def display_results(human, computer)
 end
 
 loop do
+
   human_choice = ''
+
   loop do
     prompt("Choose one: #{VALID_CHOICES.join(', ')}")
     human_choice = Kernel.gets().chomp()
@@ -40,7 +42,7 @@ loop do
   display_results(human_choice, computer_choice)
 
   prompt('Do you want to play again? [Y] for yes.')
-  play_again = gets().chomp()
+  play_again = Kernel.gets().chomp()
   break unless play_again.downcase.start_with?('y')
 end
 
