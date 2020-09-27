@@ -17,7 +17,7 @@ munsters = {
 }
 
 
-munsters.each do | name , attributes|
+munsters.each do | munster , attributes|
   if (0..17).include?(attributes["age"])
     attributes["age_group"] = 'kid'
   elsif (18..64).include?(attributes["age"])
