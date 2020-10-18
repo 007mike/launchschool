@@ -13,7 +13,7 @@ end
 
 def display_board(brd)
   system 'clear'
-  puts "You are a #{PLAYER_MARKER}, computer is #{COMPUTER_MARKER}"
+  puts "You are an #{PLAYER_MARKER}, computer is #{COMPUTER_MARKER}"
   puts ""
   puts "     |     |"
   puts "  #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
