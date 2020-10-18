@@ -1,5 +1,3 @@
-require 'pry'
-
 FIRST = 'choose'
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
@@ -44,13 +42,17 @@ end
 
 def joinor(num_array, sep = ', ', word = 'or')
   output = ''
-  return '' if num_array.size == 0
-  return num_array.last.to_s if num_array.size == 1
-  num_array.each do |num|
-    break if num == num_array.last
-    output << num.to_s + sep
+  case num_array.size
+  when 0 then return ''
+  when 1 then return num_array.last.to_s
+  when 2 then return num_array.join(" #{word} ")
+  else
+    num_array.each do |num|
+      break if num == num_array.last
+      output << num.to_s + sep
+    end
+    output << "#{word} #{num_array.last}"
   end
-  output << word + ' ' + num_array.last.to_s
   output
 end
 
@@ -77,27 +79,28 @@ def player_places_piece(brd)
 end
 
 def computer_places_piece(brd)
-  square = nil
-  WINNING_LINES.each do |line|
-    square = find_at_risk_square(line, brd, COMPUTER_MARKER)
-    break if square
-  end
-
-  if !square
-    WINNING_LINES.each do |line|
-      square = find_at_risk_square(line, brd, PLAYER_MARKER)
-      break if square
-    end
-  end
-
+  square = line_check(brd, COMPUTER_MARKER)
+  square = line_check(brd, PLAYER_MARKER) if !square
   if !square
     square = 5 if brd[5] == INITIAL_MARKER
   end
-
-  if !square
-    square = empty_squares(brd).sample
-  end
+  square = empty_squares(brd).sample if !square
   brd[square] = COMPUTER_MARKER
+end
+
+def line_check(brd, marker)
+  square = nil
+  WINNING_LINES.each do |line|
+    square = find_at_risk_square(line, brd, marker)
+    break if square
+  end
+  square
+end
+
+def find_at_risk_square(line, brd, marker)
+  if brd.values_at(*line).count(marker) == 2
+    brd.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
+  end
 end
 
 def board_full?(brd)
@@ -124,12 +127,6 @@ def detect_winner(brd)
   nil
 end
 
-def find_at_risk_square(line, brd, marker)
-  if brd.values_at(*line).count(marker) == 2
-    brd.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
-  end
-end
-
 def alternate_player(player)
   if player == 'human'
     'computer'
@@ -138,34 +135,46 @@ def alternate_player(player)
   end
 end
 
-loop do
-  scores = { human: 0, computer: 0 }
-  choice = ''
-  current_player = ''
-
+def first_move
+  answer = ''
   if FIRST == 'choose'
     loop do
       system 'clear'
       prompt "*** TIC TAC TOE v1.2 ***"
       prompt 'Who goes first? (h) human or (c) computer'
-      choice = gets.chomp.downcase
-      break if choice == 'c' || choice == 'h'
+      answer = gets.chomp.downcase
+      break if answer == 'c' || answer == 'h'
       prompt "Invalid choice try again."
     end
-  elsif FIRST == 'player'
-    choice = 'h'
-  elsif FIRST == 'computer'
-    choice = 'c'
+  elsif FIRST == 'player' then answer = 'h'
   end
+  answer == 'h' ? 'human' : 'computer'
+end
+
+def display_scores(hsh)
+  prompt "Player: #{hsh[:human]} | Computer: #{hsh[:computer]} "
+end
+
+def display_winner(winner)
+  if winner == 'human'
+    prompt "GAME OVER. You won!"
+  elsif winner == 'computer'
+    prompt "GAME OVER. The computer beat you."
+  end
+end
+
+# main game loop
+loop do
+  scores = { human: 0, computer: 0 }
+  first_player = first_move
 
   loop do
     board = initialize_board
-    current_player = 'human' if choice == 'h'
-    current_player = 'computer' if choice == 'c'
+    current_player = first_player
 
     loop do
       display_board(board)
-      prompt "Player: #{scores[:human]} | Computer: #{scores[:computer]} "
+      display_scores(scores)
       place_piece!(board, current_player)
       current_player = alternate_player(current_player)
 
@@ -174,12 +183,11 @@ loop do
 
     update_score(scores, board) if someone_won?(board)
 
-    display_board(board)
-    prompt "Player: #{scores[:human]} | Computer: #{scores[:computer]} "
-
     break if scores[:human] == 5 || scores[:computer] == 5
   end
 
+  system 'clear'
+  scores[:human] == 5 ? display_winner('human') : display_winner('computer')
   prompt "Play again? (y or n)"
   answer = gets.chomp
 
