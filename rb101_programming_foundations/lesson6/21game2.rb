@@ -75,12 +75,30 @@ def display_winner(hand1, hand2)
   end
 end
 
-def display_game
+def display_game(player, dealer)
   system 'clear'
   puts '*******************'
-  puts '**** MIKE\'S 21 ****'
+  puts '*                 *'
+  puts '*    MIKE\'S 21    *'
+  puts '*                 *'
   puts '*******************'
   puts '                    '
+  display_hand_dealer(dealer)
+  display_hand_player(player)
+  puts ''
+end
+
+def display_game_reveal(player, dealer)
+  system 'clear'
+  puts '*******************'
+  puts '*                 *'
+  puts '*    MIKE\'S 21    *'
+  puts '*                 *'
+  puts '*******************'
+  puts '                    '
+  display_hand_dealer_reveal(dealer)
+  display_hand_player(player)
+  puts ''
 end
 
 #game loop
@@ -91,20 +109,23 @@ loop do
 
 #player turn
   loop do
-    display_game
-    display_hand_dealer(dealer_hand)
-    display_hand_player(player_hand)
-    puts "(h)it or (s)tay on #{calculate_hand_value(player_hand)}?"
-    answer = gets.chomp.downcase
+    display_game(player_hand,dealer_hand)
+    answer = ''
+    
+    loop do
+      puts "(h)it or (s)tay on #{calculate_hand_value(player_hand)}?"
+      answer = gets.chomp.downcase
+      break if answer == 'h' || answer == 's'
+      puts "Try again. Not a valid choice."
+    end
+
     if answer == 'h'
       player_hand = get_new_card(player_hand, game_deck)
     end
     break if answer == 's' || busted?(player_hand)
   end
 
-  display_game
-  display_hand_dealer(dealer_hand)
-  display_hand_player(player_hand)
+  display_game(player_hand, dealer_hand)
 
 #dealer turn
   if !busted?(player_hand)
@@ -113,15 +134,12 @@ loop do
       break if value >= 17 || busted?(dealer_hand)
       
       dealer_hand = get_new_card(dealer_hand, game_deck)
-      display_game
-      display_hand_dealer_reveal(dealer_hand)
-      display_hand_player(player_hand)
+      display_game_reveal(player_hand, dealer_hand)
     end
   end
 
-  display_game
-  display_hand_dealer_reveal(dealer_hand)
-  display_hand_player(player_hand)
+  display_game_reveal(player_hand, dealer_hand)
+
   
   display_winner(player_hand, dealer_hand)
   
