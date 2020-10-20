@@ -3,13 +3,13 @@ require 'pry'
 def initialize_deck
   suits = %w(♥ ♦ ♣ ♠)
   cards = %w(2 3 4 5 6 7 8 9 10 J Q K A)
-  deck = suits.product(cards)
+  suits.product(cards)
 end
 
 def initialize_hand(deck)
   selected = []
   selected << deck.sample << deck.sample
-  selected.each { |crd| deck.delete(crd) } 
+  selected.each { |card| deck.delete(card) }
   selected
 end
 
@@ -28,12 +28,13 @@ end
 
 def get_new_card(hand, deck)
   hand << deck.sample
-  hand.each { |card| deck.delete(card)}
+  hand.each { |card| deck.delete(card) }
   hand
 end
 
+# rubocop:disable Metrics/AbcSize
 def calculate_hand_value(hand)
-  card_values = hand.map { |card| card[1]}
+  card_values = hand.map { |card| card[1] }
 
   sum = 0
   card_values.each do |value|
@@ -51,6 +52,7 @@ def calculate_hand_value(hand)
 
   sum
 end
+# rubocop:enable Metrics/AbcSize
 
 def busted?(hand)
   score = calculate_hand_value(hand)
@@ -61,17 +63,17 @@ end
 def display_winner(hand1, hand2)
   score1 = calculate_hand_value(hand1)
   score2 = calculate_hand_value(hand2)
-  
-  if score1 > score2 && score1 <= 21
-    puts "You won #{score1} - #{score2}. "
-  elsif score2 > score1 && score2 <= 21
-    puts "Dealer won #{score2} - #{score1}."
-  elsif score1 == score2
-    puts "Dealer wins a tie of #{score1}."
-  elsif score1 > 21
+
+  if score1 > 21
     puts "You busted. Dealer won."
   elsif score2 > 21
     puts "Dealer busted. You win."
+  elsif score2 > score1
+    puts "Dealer won #{score2} - #{score1}."
+  elsif score1 == score2
+    puts "Dealer wins a tie of #{score1}."
+  elsif score1 > score2
+    puts "You won #{score1} - #{score2}. "
   end
 end
 
@@ -101,17 +103,17 @@ def display_game_reveal(player, dealer)
   puts ''
 end
 
-#game loop
+# game loop
 loop do
   game_deck = initialize_deck
   player_hand = initialize_hand(game_deck)
   dealer_hand = initialize_hand(game_deck)
 
-#player turn
+  # player turn
   loop do
-    display_game(player_hand,dealer_hand)
+    display_game(player_hand, dealer_hand)
     answer = ''
-    
+
     loop do
       puts "(h)it or (s)tay on #{calculate_hand_value(player_hand)}?"
       answer = gets.chomp.downcase
@@ -127,24 +129,21 @@ loop do
 
   display_game(player_hand, dealer_hand)
 
-#dealer turn
+  # dealer turn
   if !busted?(player_hand)
     loop do
       value = calculate_hand_value(dealer_hand)
       break if value >= 17 || busted?(dealer_hand)
-      
+
       dealer_hand = get_new_card(dealer_hand, game_deck)
       display_game_reveal(player_hand, dealer_hand)
     end
   end
 
   display_game_reveal(player_hand, dealer_hand)
-
-  
   display_winner(player_hand, dealer_hand)
-  
+
   puts "Play again? (y) or (n)"
   again = gets.chomp.downcase
-  break if again == 'n'
+  break unless again == 'y'
 end
-
