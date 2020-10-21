@@ -72,7 +72,7 @@ def display_winner(player, dealer)
   elsif d_score > p_score
     puts "Dealer won #{d_score} - #{p_score}."
   elsif p_score == d_score
-    puts "Dealer wins a tie of #{p_score}."
+    puts "No winner. Push on #{p_score}."
   elsif p_score > d_score
     puts "You won #{p_score} - #{d_score}. "
   end
@@ -138,7 +138,7 @@ def update_score(score, player, dealer)
 
   if p_score > d_score && p_score <= WIN_TOTAL || busted?(dealer)
     score[:player] += 1
-  elsif d_score >= p_score && d_score <= WIN_TOTAL || busted?(player)
+  elsif d_score > p_score && d_score <= WIN_TOTAL || busted?(player)
     score[:dealer] += 1
   end
 end
