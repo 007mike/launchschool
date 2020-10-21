@@ -1,4 +1,5 @@
-require 'pry'
+WIN_TOTAL = 21
+DEALER_STAY = 17
 
 def initialize_deck
   suits = %w(♥ ♦ ♣ ♠)
@@ -13,17 +14,17 @@ def initialize_hand(deck)
   selected
 end
 
-def display_hand_dealer(hand, reveal = false)
+def display_hand_dealer(hand, reveal)
   first_card = hand[0]
   if !reveal
-    puts "Dealer has: #{first_card.flatten.join(' ')} and one hidden card."
+    puts "Dealer has =>\t #{first_card.flatten.join(' ')} [ ? ]"
   else
-    puts "Dealer has: #{hand.flatten.join(' ')}"
+    puts "Dealer has =>\t #{hand.flatten.join(' ')}"
   end
 end
 
 def display_hand_player(hand)
-  puts "You have: #{hand.flatten.join(' ')}"
+  puts "You have =>\t #{hand.flatten.join(' ')}"
 end
 
 def get_new_card(hand, deck)
@@ -47,7 +48,7 @@ def calculate_hand_value(hand)
   end
 
   card_values.select { |value| value == 'A' }.count.times do
-    sum -= 10 if sum > 21
+    sum -= 10 if sum > WIN_TOTAL
   end
 
   sum
@@ -56,50 +57,53 @@ end
 
 def busted?(hand)
   score = calculate_hand_value(hand)
-  return true if score > 21
+  return true if score > WIN_TOTAL
   false
 end
 
-def display_winner(hand1, hand2)
-  score1 = calculate_hand_value(hand1)
-  score2 = calculate_hand_value(hand2)
+def display_winner(player, dealer)
+  p_score = calculate_hand_value(player)
+  d_score = calculate_hand_value(dealer)
 
-  if score1 > 21
+  if p_score > WIN_TOTAL
     puts "You busted. Dealer won."
-  elsif score2 > 21
+  elsif d_score > WIN_TOTAL
     puts "Dealer busted. You win."
-  elsif score2 > score1
-    puts "Dealer won #{score2} - #{score1}."
-  elsif score1 == score2
-    puts "Dealer wins a tie of #{score1}."
-  elsif score1 > score2
-    puts "You won #{score1} - #{score2}. "
+  elsif d_score > p_score
+    puts "Dealer won #{d_score} - #{p_score}."
+  elsif p_score == d_score
+    puts "Dealer wins a tie of #{p_score}."
+  elsif p_score > d_score
+    puts "You won #{p_score} - #{d_score}. "
   end
 end
 
-def display_game(player, dealer, reveal = false)
+def display_game(player, dealer, reveal, score)
   system 'clear'
-  puts '* * * * * * * * * * * * * *'
-  puts '*                         *'
-  puts '*        MIKE\'S 21        *'
-  puts '*                         *'
-  puts '* * * * * * * * * * * * * *'
-  puts '                    '
+  puts '* * * * * * * * * * * * * * * * * *'
+  puts '*                                 *'
+  puts "*            MIKE\'S #{WIN_TOTAL}            *"
+  puts '*                                 *'
+  puts '* * * * * * * * * * * * * * * * * *'
+  puts ' '
+  display_score(score)
+  puts ' '
   display_hand_dealer(dealer, reveal)
   display_hand_player(player)
+
   puts ''
 end
 
 def display_exit
   puts ' '
-  puts '- - - - - - - - - -'
-  puts "Thanks for playing!"
-  puts '- - - - - - - - - -'
+  puts '* * * * * * * * * * * * * * * * * *'
+  puts "*       Thanks for playing!       *"
+  puts '* * * * * * * * * * * * * * * * * *'
 end
 
-def player_turn(player, dealer, deck)
+def player_turn(player, dealer, deck, score)
   loop do
-    display_game(player, dealer)
+    display_game(player, dealer, false, score)
     answer = ''
 
     loop do
@@ -116,35 +120,74 @@ def player_turn(player, dealer, deck)
   end
 end
 
-def dealer_turn(player, dealer, deck)
+def dealer_turn(player, dealer, deck, score)
   loop do
-    hand_value = calculate_hand_value(dealer)
-    break if hand_value >= 17 || busted?(dealer)
+    dealer_value = calculate_hand_value(dealer)
+    player_value = calculate_hand_value(player)
+
+    break if dealer_value >= DEALER_STAY || busted?(dealer)
+    break if dealer_value >= player_value
 
     dealer = get_new_card(dealer, deck)
-    display_game(player, dealer, true)
+    display_game(player, dealer, true, score)
+  end
+end
+
+def update_score(score, player, dealer)
+  p_score = calculate_hand_value(player)
+  d_score = calculate_hand_value(dealer)
+
+  if p_score > d_score && p_score <= WIN_TOTAL || busted?(dealer)
+    score[:player] += 1
+  elsif d_score >= p_score && d_score <= WIN_TOTAL || busted?(player)
+    score[:dealer] += 1
+  end
+end
+
+def display_score(score)
+  puts ">>> [ Player ] #{score[:player]} : #{score[:dealer]} [ Dealer ] <<<"
+end
+
+def display_match_winner(score)
+  if score[:player] == 5
+    puts "Congrats, you won the game!"
+  else
+    puts "The dealer won the game."
   end
 end
 
 # game loop
 loop do
-  game_deck = initialize_deck
-  player_hand = initialize_hand(game_deck)
-  dealer_hand = initialize_hand(game_deck)
-  
-  player_turn(player_hand, dealer_hand, game_deck)
-  display_game(player_hand, dealer_hand)
+  scores = { player: 0, dealer: 0 }
+  quit = ''
 
-  if !busted?(player_hand)
-    dealer_turn(player_hand, dealer_hand, game_deck)
+  loop do
+    game_deck = initialize_deck
+    player_hand = initialize_hand(game_deck)
+    dealer_hand = initialize_hand(game_deck)
+
+    player_turn(player_hand, dealer_hand, game_deck, scores)
+    display_game(player_hand, dealer_hand, false, scores)
+
+    if !busted?(player_hand)
+      dealer_turn(player_hand, dealer_hand, game_deck, scores)
+    end
+
+    update_score(scores, player_hand, dealer_hand)
+    display_game(player_hand, dealer_hand, true, scores)
+    display_winner(player_hand, dealer_hand)
+
+    break if scores[:player] == 5 || scores[:dealer] == 5
+
+    print "\n[ ENTER ] to continue or\n(q) to quit current game. => "
+    quit = gets.chomp
+
+    break if quit =~ /[a-zA-Z0-9]/
   end
 
-  display_game(player_hand, dealer_hand, true)
-  display_winner(player_hand, dealer_hand)
-  print "Press [ENTER] to continue"
-  gets
+  display_match_winner(scores) unless quit != ''
 
-  print "Play again? (y) or (n) => "
+  print "\nPlay again? (y) or (n) => "
   again = gets.chomp.downcase
   break unless again == 'y'
 end
