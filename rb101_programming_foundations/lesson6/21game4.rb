@@ -126,7 +126,6 @@ def dealer_turn(player, dealer, deck, score)
     player_value = calculate_hand_value(player)
 
     break if dealer_value >= DEALER_STAY || busted?(dealer)
-    break if dealer_value >= player_value
 
     dealer = get_new_card(dealer, deck)
     display_game(player, dealer, true, score)
