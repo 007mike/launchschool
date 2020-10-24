@@ -1,0 +1,140 @@
+Ruby expressions always return a value, even if that value is nil or an error.
+
+It is helpful to think of variables as containers that hold information. Their sole purpose is to label and store data in memory
+
+Here we've assigned the value 'Joe', which is a string, to the variable first_name
+
+variables point to values in memory, and are not deeply linked to each other
+
+A variable's scope determines where in a program a variable is available for use. A variable's scope is defined by where the variable is initialized or created. In Ruby, variable scope is defined by a block. A block is a piece of code following a method invocation, usually delimited by either curly braces {} or do/end
+
+* Note: the key distinguishing factor for deciding whether code delimited by {} or do/end is considered a block (and thereby creates a new scope for variables), is seeing if the {} or do/end immediately follows a method invocation. For example:
+
+arr = [1, 2, 3]
+
+for i in arr do
+  a = 5      # a is initialized here
+end
+
+puts a       # is it accessible here?
+
+The answer is yes. The reason is because the for...do/end code did not create a new inner scope, since for is part of Ruby language and not a method invocation. When we use each, times and other method invocations, followed by {} or do/end, that's when a new block is created.
+
+Constants are declared by capitalizing every letter in the variable's name, per Ruby convention
+Constants cannot be declared in method definitions, and are available throughout your application's scopes.
+
+Local variables are the most common variables you will come across and obey all scope boundaries. 
+
+
+ Before we can use a method, we must first define it with the reserved word def. After the def we give our method a name. At the end of our method definition, we use the reserved word end to denote its completion.
+
+ We call (or invoke) the method by typing its name and passing in arguments. You'll notice that there's a (words) after say in the method definition. This is what's called a parameter. Parameters are used when you have data outside of a method definition's scope, but you need access to it within the method definition. If the method definition does not need access to any outside data, you do not need to define any parameters.
+
+You will also see the term method invocation to refer to calling a method.
+
+Arguments are pieces of information that are sent to a method invocation to be modified or used to return a specific result. We "pass" arguments to a method when we call it
+
+When we call say("hello"), we pass in the string "hello" as the argument in place for the words parameter. Then the code within the method definition is executed with the words local variable evaluated to "hello".
+
+A method definition creates its own scope outside the regular flow of execution. This is why local variables within a method definition cannot be referenced from outside of the method definition. It's also the reason why local variables within a method definition cannot access data outside of the method definition (unless the data is passed in as a parameter).
+
+Make sure you don't mix up method invocation with a block and method definition when you're working with local variable scope issues. They may look similar at first, but they are not the same. They have different behaviors when it comes to local variable scope.
+Copy Code
+
+# Method invocation with a block
+
+[1, 2, 3].each do |num|
+  puts num
+end
+
+# Method definition
+
+def print_num(num)
+  puts num
+end
+
+
+obj.method or method(obj)
+
+There are two ways to call methods that we will discuss in this book. The some_method(obj) format is when you send arguments to a method call; in the previous example, obj is the argument being passed in to the some_method method. Sometimes, you will see methods called with an explicit caller, like this a_caller.some_method(obj). For now it's best to think of the previous code as some_method modifying a_caller
+
+Mutating the Caller
+
+Sometimes, when calling a method, the argument can be altered permanently. We call this mutating the caller. 
+
+Ruby methods ALWAYS return the evaluated result of the last line of the expression unless an explicit return comes before it.
+
+def add_three(n)
+  n + 3
+end
+The above method will return - not print out, but return - the value passed in incremented by 3. We can use it like this:
+
+add_three(5)        # returns 8
+Since the add_three method call returns a value, we can then keep calling methods on the returned value.
+
+add_three(5).times { puts 'this should print 8 times'}
+This means that we're calling the times method on the returned value of add_three(5), which is 8
+
+What is less obvious is that Ruby actually allows us to pass a method call as an argument to other methods. Stated differently, we're saying we can pass add(20, 45) and subtract(80, 10) as arguments to another method.
+
+Remember that these method calls return integer values which is what allows us to perform such an operation. In other words, the returned value is what is being passed as arguments
+
+We've seen that method calls always return a value and we can pass that method call as an argument to another method call based on the returned value. Thus it's vital to know what our defined methods are returning, since in the final analysis, this is what is actually being passed as arguments to other method calls.
+
+One thing to remember is that comparison operators always return a boolean value. A boolean value is either true or false, nothing else.
+
+You can think of !true as saying "not true".
+
+Ruby follows an order of precedence when deciding how to evaluate multiple expressions. The following is a list of operations from highest order of precedence (top) to lowest (bottom).
+
+<=, <, >, >= - Comparison
+==, != - Equality
+&& - Logical AND
+|| - Logical OR
+
+ In Ruby, every expression evaluates to true when used in flow control, except for false and nil
+
+ loop do
+ next
+ break
+ end
+
+ while x < 10
+ x += 1
+ end
+
+ until x < 0
+ x -= 1
+ end
+
+ for i in 1..x do
+ xx
+ end
+
+ Arrays are what we call indexed lists. That means that each slot in an array is numbered. You can reference any element by its index number. The syntax to do this is typing the array name with the index in brackets [] directly following
+
+ irb :007 > array.pop
+=> "another string"
+irb :008 > array
+=> [1, "Bob", 4.33
+
+Note that when we called the pop method, the original array variable was modified (ie, this is a method that mutates the caller), but the returned value is the popped element, as shown in the first line above. This is a critical distinction to understand. Make sure you distinguish between the returned value by an expression, and what the expression is actually doing.
+
+The delete_at method can be helpful if you'd like to eliminate the value at a certain index from your array. a.delete_at(0)
+
+As a side note, sometimes you will know the value that you want to delete, but not the index. In these situations you will want to use the delete method.  a.delete('cat')
+
+The include? method checks to see if the argument given is included in the array. It has a question mark at the end of it which usually means that you should expect it to return a boolean value, true or false. (Such methods are called predicates.) 
+
+a.each_with_index { |val, idx| puts "#{idx+1}. #{val}" }
+
+A hash is a data structure that stores items by associated keys. This is contrasted against arrays, which store items by an ordered index. Entries in a hash are often referred to as key-value pairs. This creates an associative representation of data.
+
+Most commonly, a hash is created using symbols as keys and any data types as values. All key-value pairs in a hash are surrounded by curly braces {} and comma separated.
+
+variables are pointers to physical space in memory. In other words, variables are essentially labels we create to refer to some physical memory address in your computer.
+
+PEDAC TEMPLATE
+https://gist.github.com/Cadowyn/a8b78f9682d026348dc5c0aa7e01eded
+
+
