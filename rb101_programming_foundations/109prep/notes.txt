@@ -137,4 +137,69 @@ variables are pointers to physical space in memory. In other words, variables ar
 PEDAC TEMPLATE
 https://gist.github.com/Cadowyn/a8b78f9682d026348dc5c0aa7e01eded
 
+Truthiness
+
+After that review of booleans and logical operators, we're finally able to talk about the notion of "truthiness". Truthiness differs from true in that Ruby considers more than the true object to be "truthy". In fact, Ruby is a very liberal language and considers everything to be truthy other than false and nil.
+
+This means that we can use any expression in a conditional, or with logical operators, and as long as it doesn't evaluate to false or nil, it is considered true. Note that an expression that Ruby considers true is not the same as the true object. This is what "truthiness" means. Let's take a look at an example.
+
+Copy Code
+num = 5
+
+if num
+  puts "valid number"
+else
+  puts "error!"
+end
+If you didn't know Ruby at all, you might guess that the above should either output "error!", or the program should generate an error of some sort. But if you run that code, it will actually output "valid number". The reason is because Ruby considers any integer to be "truthy"
+
+Method definition is when, within our code, we define a Ruby method using the def keyword.
+
+Method invocation is when we call a method, whether that happens to be an existing method from the Ruby Core API or core Library, or a custom method that we've defined ourselves using the def keyword.
+
+What we do want you to be clear on at this stage however, is that a block is part of the method invocation. In fact, method invocation followed by curly braces or do..end is the way in which we define a block in Ruby.
+
+Essentially the block acts as an argument to the method. In the same way that a local variable can be passed as an argument to a method at invocation, when a method is called with a block it acts as an argument to that method.
+
+n both of the above examples, the method definition is such that the method has a parameter str. This allows the method to access the string "Hello" since it is passed in as an argument at method invocation in the form of the local variable word.
+
+ with a local variable being passed to a method as an argument
+
+ When invoking a method with a block, we aren't just limited to executing code within the block; depending on the method definition, the method can use the return value of the block to perform some other action. Consider the following example:
+
+a = "hello"
+
+[1, 2, 3].map { |num| a } # => ["hello", "hello", "hello"]
+
+The Array#map method is defined in such a way that it uses the return value of the block to perform transformation on each element in an array. In the above example, #map doesn't have direct access to a but it can use the value of a to perform transformation on the array since the block can access a and returns it to #map.
+
+The def..end construction in Ruby is method definition
+Referencing a method name, either of an existing method or subsequent to definition, is method invocation
+Method invocation followed by {..} or do..end defines a block; the block is part of the method invocation
+Method definition sets a scope for local variables in terms of parameters and interaction with blocks
+Method invocation uses the scope set by the method definition
+
+What does pass by "value" mean?
+
+In order to talk about what "pass by value" traditionally means, we'll talk about it using a traditional language -- C. In C, when you "pass by value", the method only has a copy of the original object. Operations performed on the object within the method have no effect on the original object outside of the method.
+
+Some Rubyists say Ruby is "pass by value" because re-assigning the object within the method doesn't affect the object outside the method. Example:
+
+Copy Code
+def change_name(name)
+  name = 'bob'      # does this reassignment change the object outside the method?
+end
+
+name = 'jim'
+change_name(name)
+puts name           # => jim
+
+Note that the code example above has two different local variables named name. There is one scoped within the method, and there is one in the main scope. This is not variable shadowing, because the main scope variable is not accessible to the method. Within the method, we could have named the variable something other than name.
+
+pass by value = pass a copy (does not mutate the caller)
+pass by reference = same object passed in (mutate the caller)
+
+Understand if a method returns a value, or has side effects, or both.
+
+In general, if a method has both side effects and a meaningful return value, it's a red flag. Try to avoid writing methods that do this, as it will be very difficult to use these methods in the future.
 
