@@ -1,3 +1,6 @@
+We’ve initialized the variable var_name and assigned to it the Integer/String/etc object value to it.
+
+
 Ruby expressions always return a value, even if that value is nil or an error.
 
 It is helpful to think of variables as containers that hold information. Their sole purpose is to label and store data in memory
@@ -202,4 +205,6 @@ pass by reference = same object passed in (mutate the caller)
 Understand if a method returns a value, or has side effects, or both.
 
 In general, if a method has both side effects and a meaningful return value, it's a red flag. Try to avoid writing methods that do this, as it will be very difficult to use these methods in the future.
+
+Integers and symbols in Ruby with same values occupy the same physical space in memory(they are the same objects) so integer 4 will always be the same object with same object_id even though you assign it to different local variables. Same goes with symbols
 
